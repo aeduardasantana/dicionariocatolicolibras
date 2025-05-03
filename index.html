@@ -1,0 +1,268 @@
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicionário Português x LIBRAS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        #search {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            border: 2px solid #3498db;
+            border-radius: 5px;
+        }
+
+        #result {
+            margin-top: 20px;
+            /* Removed min-height to allow content to dictate height */
+        }
+
+        .result-item {
+            margin-bottom: 20px; /* Space between multiple results */
+        }
+
+        .result-item h2 {
+            margin-bottom: 10px;
+            color: #34495e;
+            text-align: left;
+        }
+
+        iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .not-found {
+            color: #e74c3c;
+            font-size: 18px;
+            margin-top: 50px;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dicionário Português x LIBRAS</h1>
+
+    <input type="text" id="search" placeholder="Digite uma palavra (ex: surdo, libras, trigo)...">
+
+    <div id="result"></div>
+
+    <script>
+        const dictionary = {
+            'jeremias': 'https://drive.google.com/file/d/1--cFKlAn9qaMN0MyK4yrqzT37UH9-XeO/preview',
+            'ira': 'https://drive.google.com/file/d/1-7Axhnxf1ZGGjufVGayTDuwVfz8-VUBK/preview',
+            'ódio': 'https://drive.google.com/file/d/1-7Axhnxf1ZGGjufVGayTDuwVfz8-VUBK/preview',
+            'gula': 'https://drive.google.com/file/d/1-L3516SNk4g1BnnIX9D982IrgXk4bc_k/preview',
+            'saulo': 'https://drive.google.com/file/d/1-Odibim5XB3UQvKZElVtBspeoyT5-ETw/preview',
+            'oração': 'https://drive.google.com/file/d/10BnGhiDacCacwMxF3WFNNMNwYC-HS1mC/preview',
+            'trauma': 'https://drive.google.com/file/d/10Nz5JD_1Z6bMrdVVAdj1vNtPVs0d7bOM/preview',
+            'javé': 'https://drive.google.com/file/d/10POt-wv3C1zHoAFivyBpCM8Var14YOun/preview',
+            'herodíades': 'https://drive.google.com/file/d/10RkskFiHwx1Huta_qBwZKibx0BQfrmdW/preview',
+            'judas tadeu': 'https://drive.google.com/file/d/10cYkHCNCUYem-Hgpbln6ZPnz7-PeLphB/preview',
+            'frei': 'https://drive.google.com/file/d/10sQzmgYKw16yuCGBrDi8EtJlk_LjxwtG/preview',
+            'colossenses': 'https://drive.google.com/file/d/11sO-XtiCDiqqrv_DXvTbZkihX-OCUsCk/preview',
+            'falsidade': 'https://drive.google.com/file/d/11xRBAGGXjrqhEFDMBeoIZCgVkEOXPcs2/preview',
+            'salomão': 'https://drive.google.com/file/d/12A54z87F25PYy9HSXs3A8DlrE-OKPXln/preview',
+            'maria (mãe de jesus)': 'https://drive.google.com/file/d/12BW7CpnOgw1zRs0BUIJNuPd6XR-m7PYc/preview',
+            'pastor (de ovelhas)': 'https://drive.google.com/file/d/12i7ow8OdJvgjc5uw___gBTOai5gn2jKT/preview',
+            'levi': 'https://drive.google.com/file/d/12iFSlrssbA0HADbwwWFx9Jp9NybdNmUr/preview',
+            'apocalipse': 'https://drive.google.com/file/d/12m3K1Y4I-XgzaRAKPhi11zBVos9SSvLz/preview',
+            'confissão': 'https://drive.google.com/file/d/12sfBimAqzBZTauWVeFgQTeHu63RQAeSW/preview',
+            'números': 'https://drive.google.com/file/d/12vUGBqCtKZtvSdd-Kkzm7dARLqfPoU3a/preview',
+            'saduceu': 'https://drive.google.com/file/d/12xmS_vtTBvAMbVD6slYnzGQAEMlqn5S7/preview',
+            'forte': 'https://drive.google.com/file/d/13-Z5DhhND1e-6f1jpyd9VHuosONBg_U9/preview',
+            'lucas': 'https://drive.google.com/file/d/137i4r60pbpf8JHFL5PutgWBGEFc7PZ4j/preview',
+            'orgulho (arrogância)': 'https://drive.google.com/file/d/13EEc3wtAjVM56f9joM1coZBkQNF2Xjvj/preview',
+            'oseias': 'https://drive.google.com/file/d/13MFxVD0ztM2nAgCNf_rsTDvTYgOxPPnW/preview',
+            'malaquias': 'https://drive.google.com/file/d/13O7RO5n41XyjGgZ22hqBwTLmn9OD9Rgl/preview',
+            'tomóteo': 'https://drive.google.com/file/d/13RLELnq9JoPpRqH34FbKTuQ-Z9WVUZZ/preview',
+            'mateus': 'https://drive.google.com/file/d/13RpZ6r8PefQ_RVji8GZmeGUjpbci8ZFq/preview',
+            'roma': 'https://drive.google.com/file/d/13YKQo_vJ7lLd1WIMH4UL3uGm6UAV_Rqy/preview',
+            'pastor (protestante)': 'https://drive.google.com/file/d/13aUhzBxSHPY43eyQH_Z6TwbfKo05_77J/preview',
+            'verdade': 'https://drive.google.com/file/d/14NJwItKRU23db_HqmJVNwlU8fMV9CaHj/preview',
+            'crisma': 'https://drive.google.com/file/d/14aHJgIZbMrDyGHDDccVjzHBTlHW0D0Aa/preview',
+            'jejum': 'https://drive.google.com/file/d/14kIW6pn38bHPaMdw2AEi0SaC5cF6z9zt/preview',
+            'sofrimento (sofrer, paixão, piedade, dó)': 'https://drive.google.com/file/d/14nOllVGRCSaZTGY7JwEU5toCF-DCCn_A/preview',
+            'caim': 'https://drive.google.com/file/d/14x3bAoydYDzKsd5UayKURISpysnWZoTz/preview',
+            'egito': 'https://drive.google.com/file/d/159ZBn-IXjeVTVgDDvKKm83iO_LGzQR1s/preview',
+            'arábia saudita': 'https://drive.google.com/file/d/15BKbdI3RAsqJInNkgfoKqlN_ydRwVkwc/preview',
+            'lázaro': 'https://drive.google.com/file/d/15HXQ74cdDNPSlCYsgURZWySm2wnhclHE/preview',
+            'pregador': 'https://drive.google.com/file/d/15KE6UIjvKnR2XtkCxVbQ1vSNv4VCJbzI/preview',
+            'criação (milagre)': 'https://drive.google.com/file/d/15Mg1AhPXUB5XtQq7PR57-bF3thLVfZHs/preview',
+            'cristo': 'https://drive.google.com/file/d/15VOxK7wxmzIGjQvtjpw9KSsK7tqAyF00/preview',
+            'simão cirineu': 'https://drive.google.com/file/d/15_Me_f-H9xsf1skex6zZhCrMPUZ6YIVU/preview',
+            'estevão': 'https://drive.google.com/file/d/15qIc42KBgGckgF9PcrfbwbESGOyEY_LA/preview',
+            'eva': 'https://drive.google.com/file/d/15xzNEEMjKOZ6fuZM2tbPOIdGk-ej6PjS/preview',
+            'andré': 'https://drive.google.com/file/d/15yRRNzgLVP6DzeK54X6Gh7PNp-EBVMbA/preview',
+            'inveja': 'https://drive.google.com/file/d/160fDgCTxVRqyo5tI64okGXmd3ASZQPX_/preview',
+            'matrimônio (casamento)': 'https://drive.google.com/file/d/16dwz6LXRqn-oM0OHEa_QNzoaEiE-288U/preview',
+            'barrabás': 'https://drive.google.com/file/d/16fYZ93-ztoajzrHgQTKhI7bR4jR1zuyY/preview',
+            'miriam': 'https://drive.google.com/file/d/16iNWSFUFPDduLt57hgYM2UOFA9SBdOfS/preview',
+            'samuel': 'https://drive.google.com/file/d/16vqy6_eOf4aQRqSJ2VYqWjfrFhSwWm7Z/preview',
+            'jericó': 'https://drive.google.com/file/d/17POH0f8Uwzwyz2oVw8ixw8ydSstAIYuW/preview',
+            'curioso': 'https://drive.google.com/file/d/17WDYScDqBV3qhkY37S6jcIb3H2T4vDNL/preview',
+            'vocação': 'https://drive.google.com/file/d/17duPAUGtzTclMSL43JcpPBXIsBHWl0lm/preview',
+            'monte tabor': 'https://drive.google.com/file/d/17h4XWeLOPz9VjZ680PS0qoXw6cQHChF3/preview',
+            'batismo': 'https://drive.google.com/file/d/18Ggil9rRdCage_Xtj0aF-RqfY8omdqJ2/preview',
+            'débora': 'https://drive.google.com/file/d/18KagqpVvyvt30vh56tOreLembMQkzfBL/preview',
+            'fingir': 'https://drive.google.com/file/d/18PLFdwBdKOAq3hdzyQ2DtqAqBoNqbi_C/preview',
+            'santo (santidade)': 'https://drive.google.com/file/d/18cTpYfIzZA3miPsnPWpWEh17kxx6FD9C/preview',
+            'fidelidade': 'https://drive.google.com/file/d/18ew2w1HGIRddEuOnf51BMhq9NfUBtsMl/preview',
+            'sacramento': 'https://drive.google.com/file/d/198zF18_6m2XBpvvhvPtwQo7AYAp_oSIN/preview',
+            'judas': 'https://drive.google.com/file/d/19NyR6Ue6ennCd8FV7_1a7qYQ2BCM0HbP/preview',
+            'chamado': 'https://drive.google.com/file/d/19TFoHRhgY65Mj-WYDn-BsgqZ-55FbG9Y/preview',
+            'mentira': 'https://drive.google.com/file/d/19USYdFkDg2RVkN4Bba9b88ccMbQGZORI/preview',
+            'fofoca': 'https://drive.google.com/file/d/19XFecdUaniidgruA3MRWfRYR78dWXTZt/preview',
+            'jerusalém 1': 'https://drive.google.com/file/d/19YPVBoW9Pz7fosAZ_lOwJhqo29dCfPM7/preview',
+            'demônio': 'https://drive.google.com/file/d/19_7MpaT3HfbMc2G6FnfX9Fc69ibZXil0/preview',
+            'edom': 'https://drive.google.com/file/d/1A39CSTMEh8kPQFnfalBtdNk7eq_6NLLB/preview',
+            'inimigo': 'https://drive.google.com/file/d/1ACdxZriGt4JYqbTuEoUEVl6vWF2fDRW3/preview',
+            'monte das oliveiras': 'https://drive.google.com/file/d/1Ab5W9Q05imfL5kUD9Blf_HgaK2MBwdzX/preview',
+            'benjamim': 'https://drive.google.com/file/d/1Aqo-AtHMTK3bRf-6XX8zWEkM0Kom6oLC/preview',
+            'dragão': 'https://drive.google.com/file/d/1B3JC9AGZ4ey_em8qoWlafmywIUgY5jNf/preview',
+            'judite': 'https://drive.google.com/file/d/1BfLpOmMzuHyeE_GpDhe1coBosY3-hh2E/preview',
+            'judá': 'https://drive.google.com/file/d/1BhTUX6aussPn0zFf0L1puwestzGADgY0/preview',
+            'escriba': 'https://drive.google.com/file/d/1BzhuPlTvHSMWTFn3viAQP8nvEAdd3-oo/preview',
+            'rafael (anjo)': 'https://drive.google.com/file/d/1C1crr6Q4OxzKGPznQzeYrENVox53wUsA/preview',
+            'abraão': 'https://drive.google.com/file/d/1C4Ctgh7a0n2RqjGJGduKfZch6Ad5uYZh/preview',
+            'farizeu': 'https://drive.google.com/file/d/1CGxXRkf4ItumNrcYTFQaj1ootlVdcv5j/preview',
+            'preguiça': 'https://drive.google.com/file/d/1CrqSZr6FeKqwH8NAo8lDoyYKm-IhhDxn/preview',
+            'coração': 'https://drive.google.com/file/d/1DhqwqLgQnXway44wDHFcCz2VXrE02Hic/preview',
+            'sempre': 'https://drive.google.com/file/d/1E1g1qg1zU-Cus4J5S_8DNHa5w-iRFecN/preview',
+            'amém': 'https://drive.google.com/file/d/1E6QNqcz4DIFdSiMnyCG6SY4ARn6hTzfn/preview',
+            'galiléia': 'https://drive.google.com/file/d/1E8wNFlyZA-cpH05NeiG_x4ezGstkUfp0/preview',
+            'ezequial': 'https://drive.google.com/file/d/1EksnTtvwg2cvFQTB2P5P4WRE5S8m0Bfr/preview',
+            'sodoma e gomorra': 'https://drive.google.com/file/d/1Ey6_8t5tHLTIX7ADSeEgeoNdFXdk1pvW/preview',
+            'deus': 'https://drive.google.com/file/d/1Ezg15_fAJz0eiKNXCkT8N32pmzrpKYjt/preview',
+            'babilônia': 'https://drive.google.com/file/d/1F9B0aMLnMYxsvLa-CTP6_RkCT3V9tDQo/preview',
+            'sinagoga': 'https://drive.google.com/file/d/1FeHpID0i5GfzyTj_cETqWgXwmODnvFKI/preview',
+            'ismael': 'https://drive.google.com/file/d/1G2rIxYNVWvr7G53Vg3p4mJt-9imFbGQg/preview',
+            'betânia': 'https://drive.google.com/file/d/1G5HaWhnBOAOWhkpKiiEQgnE6ilFyfj6S/preview',
+            'desprezar': 'https://drive.google.com/file/d/1GLHC2xUFJPD-sQveTU5CwatikfPxjZcl/preview',
+            'vida': 'https://drive.google.com/file/d/1GmD7przagJySe1x5QLg3Xu8z-U8Jenmi/preview',
+            'evangelho': 'https://drive.google.com/file/d/1GmJpitATlpEVPT7x7P4drBH7RX0M3Dej/preview',
+            'bobeira (bobagem)': 'https://drive.google.com/file/d/1GoyxigYIIaAfF0TE7yG6pzcj3vPfXm7_/preview',
+            'cuidar': 'https://drive.google.com/file/d/1GptzGFbHUsbInEyOAKMT1ehJDMnXzMVZ/preview',
+            'salmos': 'https://drive.google.com/file/d/1Gr7dUu2rSOvHK5ImzGIhm1N5b44WuTFy/preview',
+            'macedônia': 'https://drive.google.com/file/d/1H793QQhAX-o4cD8arS-hvUQAI226BYuL/preview',
+            'tito': 'https://drive.google.com/file/d/1HBd7oP-XJpVfvrA2vt9_egwirnxjD9X8/preview',
+            'católica': 'https://drive.google.com/file/d/1HHw_lw_VS0vYaQP3lWJoJAZa11NJY3JX/preview',
+            'ordem': 'https://drive.google.com/file/d/1HTb1EZYsP4DoMH52DC5V0PToVOZvhiVJ/preview',
+            'ageu': 'https://drive.google.com/file/d/1Hlzdf37MBBAML97PYplRjQVNrLxxUtY_/preview',
+            'corpo': 'https://drive.google.com/file/d/1HyeszhL8m-SS2kCh6DS7JX1uNanDL-US/preview',
+            'profeta': 'https://drive.google.com/file/d/1I06FMldoAqb2L5pkyNjIU7Mcp0Sowsh3/preview',
+            'prazer': 'https://drive.google.com/file/d/1I7Bqlf2cMNO6GnuDeuC5dyMl4Sdi4iD0/preview',
+            'zaquel': 'https://drive.google.com/file/d/1J1VpBudS_lmhzVyfZUuO2oDbU1E2nyxW/preview',
+            'cenáculo': 'https://drive.google.com/file/d/1JTAiM4T5xasieC2CVB047V558Gq5YSDg/preview',
+            'mesopotâmia': 'https://drive.google.com/file/d/1Jvt3DwEeV0k2qvHLZeYlzZTdibYjKUiq/preview',
+            'joel': 'https://drive.google.com/file/d/1K-eu6UIsoTazbmjsCq2_DvG8GV2JnNi_/preview',
+            'abençoar': 'https://drive.google.com/file/d/1KCad77cdkpWcTN_134tPiSASKzAKoYdt/preview',
+            'matar': 'https://drive.google.com/file/d/1KQDC97R6QAE_-c1IaVQ1iYu6ZCUuUyrr/preview',
+            'ester': 'https://drive.google.com/file/d/1LWpVKlZcb_JZlmJf_xgFtrVm9qK8vf7U/preview',
+            'padre': 'https://drive.google.com/file/d/1Ln8ltFzuXyOv5msemaw9zl-PSLbRIjax/preview',
+            'sacrifício': 'https://drive.google.com/file/d/1MaiiwJ__XzBReMmka5wO56bbUv6eX95i/preview',
+            'josé (esposo de maria)': 'https://drive.google.com/file/d/1MnF5ncUBqzebmtGq0oAdscbdS3_lbBVZ/preview',
+            'ética': 'https://drive.google.com/file/d/1MrzLLajqNLO7gSM9HdBHbvMXsGorUVKq/preview',
+            'hamã': 'https://drive.google.com/file/d/1MtkoiK4wXFK_HcKyb4wolzF3Fb8y1F_X/preview',
+            'zacarias (profeta)': 'https://drive.google.com/file/d/1MyphF9k9Cuv-_5zW2ALpVl4RHCMYdI3o/preview',
+            'deserto': 'https://drive.google.com/file/d/1NG5OMtXtOS_qSzv89r19jfc6Ohy3mJlv/preview',
+            'isaías': 'https://drive.google.com/file/d/1NI6_zB3iJT2OhEEZSD7Mn8h1NZv6gd2b/preview',
+            'altar': 'https://drive.google.com/file/d/1NUSZj0_7UDTrAHZSKRr-NdwzUg3fw5ms/preview',
+            'précia': 'https://drive.google.com/file/d/1NpjNvH-CMumIMN2hNXvEum3lRmDihL1v/preview',
+            'esforçar (força)': 'https://drive.google.com/file/d/1NtoaeYJzooDoZcj9NZlVkZvt2x484gMz/preview',
+            'jerusalém 2': 'https://drive.google.com/file/d/1OrPXP6q1umlL9h8gHItGAkN9YcATSGTz/preview',
+            'miquéias': 'https://drive.google.com/file/d/1OrzJNsCph1Q0LK2Dt_Qea-ohIzgXpSfM/preview',
+            'samaria': 'https://drive.google.com/file/d/1P1jDu310mL7bpaoR98mpafzO6gVJgq3h/preview',
+            'adultério': 'https://drive.google.com/file/d/1P9Dma0xfqvTnRA7P9fo0PffCUCySeEOO/preview',
+            'país': 'https://drive.google.com/file/d/1PNvI0lNvBfpFFwOZ3ZVE_LNIkV0E-47C/preview',
+            'natã': 'https://drive.google.com/file/d/1PNvvbIQWVa--1SHmmKfHJAGIXy8LCYMS/preview',
+            'alegria': 'https://drive.google.com/file/d/1PpCQ2WBasRzSWJrfsbNaN1umtKKC3hbd/preview',
+            'metido (exibido)': 'https://drive.google.com/file/d/1Ppn5vPiRaOr4v6aWv9v3gvgkf6jUhAoo/preview',
+            'respeito': 'https://drive.google.com/file/d/1Px3A5Spsxhdm7HlttbdTHQ2wxlmg8aNa/preview',
+            'cânticos': 'https://drive.google.com/file/d/1QJ9PEiKFYFnH6j7WfewXVEgHb9EucNMw/preview',
+            '2 israel': 'https://drive.google.com/file/d/1R5tuuJ07ZZDavjzU1Tc6QooDZP44tI-E/preview',
+            'sara': 'https://drive.google.com/file/d/1RDSLQwligh20FABfsKjHRRUw_gcghlKo/preview',
+            'rute': 'https://drive.google.com/file/d/1RUj2ly46NEfcK1Qw8kj2XbReN08fo2HK/preview',
+            'ofender': 'https://drive.google.com/file/d/1ReOz10cUQPQfZv8wQ2j2tNixnub8uyqw/preview',
+            'felipe': 'https://drive.google.com/file/d/1Rj6is3IW-TaV_5jtl1uZjtvEgD0dIuIh/preview',
+            'lamentações': 'https://drive.google.com/file/d/1RsBAXREbXNYBZyBIIMH5wV6dZkOfdRcQ/preview',
+            'graça': 'https://drive.google.com/file/d/1S0ifjJQjDzhLP3TpPMy8-0Yf7-oZzjH6/preview',
+            'eucaristia': 'https://drive.google.com/file/d/1S4GOPafwvIInMXPL2idfkPVewySLo11T/preview',
+            'neemias': 'https://drive.google.com/file/d/1SOr5QRK1X7bovKQiFKWj-cYU3o91myS2/preview',
+            'maria madalena': 'https://drive.google.com/file/d/1Se4GjiGk2VWGqy72MnLdVZ_oAZuGieUt/preview',
+            'jesus': 'https://drive.google.com/file/d/1SwOiPMqaJA_cTeLiD3sL3DX40XKQGvQn/preview',
+            '1 israel': 'https://drive.google.com/file/d/1TmpCEiRRxq6c8QwDcXrwIVMCcAg8eXTK/preview',
+            'jonas': 'https://drive.google.com/file/d/1Tn2fcg1B3VQR3jc0_h0WQ_hcG6jnUnfe/preview',
+            'publicano (cobrador de impostos)': 'https://drive.google.com/file/d/1Tzuun8Z_N9j_cKew_hW4E76xVfQUzr0z/preview',
+            'prostituta': 'https://drive.google.com/file/d/1U0FzOaoY9yHr1GdYorEHzegM1lRf1n-2/preview',
+            'pai': 'https://drive.google.com/file/d/1UAQrPoetEKhyDsHtGQxT-ff6Kjmv42pT/preview',
+            'bispo': 'https://drive.google.com/file/d/1UEb0457mRANFVXciUCtoN67dOhCqBaXw/preview',
+            'velho testamento': 'https://drive.google.com/file/d/1UIV7qHGzeqo3NEvg9rjrSNvPpAi6vl57/preview',
+            'elizéu': 'https://drive.google.com/file/d/1ULepmbbeF89IzMYByVTbEOEGLgj325mJ/preview',
+            'missionário (missão)': 'https://drive.google.com/file/d/1UTLneim7WLkXbU7Qco-ATtDB1O-eTyLu/preview',
+            'belém': 'https://drive.google.com/file/d/1UWCN2hnccESv59hplxGe8hFzxt8XwlvF/preview',
+            'naum': 'https://drive.google.com/file/d/1V2Nfz1Uh9j3JcKpZLxebsvkgMbpzbSWP/preview',
+            'pilatos': 'https://drive.google.com/file/d/1Ve2Q0UQr-gE93PfzmCTnobZZB5TrMlcI/preview',
+            'simão': 'https://drive.google.com/file/d/1VxsKrT1W7EhDt2yXBBHPbX4V6HEYmx8t/preview',
+            'calma': 'https://drive.google.com/file/d/1VxtR-e0yiLFTKD1d0d7NZFxdkDIH7oJI/preview',
+            'infinito': 'https://drive.google.com/file/d/1W64C6iiv0Prhn2bFc2wiAopYGoyZTj5g/preview',
+            'levita': 'https://drive.google.com/file/d/1W709pBEecaiJl1S1rYRSJjJnXAtQxtxf/preview',
+            'gênesis': 'https://drive.google.com/file/d/1WOeu2_LHaUw110GPqsZGxDU-rfeH88JE/preview',
+            'penitência': 'https://drive.google.com/file/d/1WOlx_FgDj6cHwPNmUtdjuKUZme16R9hX/preview',
+            'eterno': 'https://drive.google.com/file/d/1WTBrKYwq7OfpZyB8rmBsj5vZDF8pvf5L/preview',
+        };
+
+        const searchInput = document.getElementById('search');
+        const resultDiv = document.getElementById('result');
+
+        searchInput.addEventListener('input', function() {
+            const word = this.value.toLowerCase().trim();
+
+            if (word === '') {
+                resultDiv.innerHTML = '';
+                return;
+            }
+
+            if (dictionary[word]) {
+                resultDiv.innerHTML = `
+                    <div class="result-item">
+                        <h2>${word.charAt(0).toUpperCase() + word.slice(1)} em LIBRAS:</h2>
+                        <iframe src="${dictionary[word]}" allow="autoplay"></iframe>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="not-found">
+                        Palavra não encontrada no dicionário. Tente "surdo", "libras" ou "trigo".
+                    </div>
+                `;
+            }
+        });
+    </script>
+    <footer>
+        <p><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="3f5b4a5b50484c5e514b5e515e7f58525e5653115c5052">[email&#160;protected]</a></p>    
+    </footer>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script></body>
+</html>
