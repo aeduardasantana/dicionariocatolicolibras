@@ -386,25 +386,19 @@
                 return;
             }
 
-            const matches = Object.entries(dictionary).filter(([key]) =>
-    key.toLowerCase().includes(word)
-);
-
-if (matches.length > 0) {
-    resultDiv.innerHTML = matches.map(([key, url]) => `
-        <div class="result-item">
-            <h2>${key.trim()} em LIBRAS:</h2>
-            <iframe src="${url}" allow="autoplay"></iframe>
-        </div>
-    `).join('');
-} else {
-    resultDiv.innerHTML = `
-        <div class="not-found">
-            Palavra não encontrada no dicionário. Tente outra palavra ou termo.
-        </div>
-    `;
-}
-                `;
+            if (dictionary[word]) {
+                resultDiv.innerHTML = 
+                    <div class="result-item">
+                        <h2>${word.charAt(0).toUpperCase() + word.slice(1)} em LIBRAS:</h2>
+                        <iframe src="${dictionary[word]}" allow="autoplay"></iframe>
+                    </div>
+                ;
+            } else {
+                resultDiv.innerHTML = 
+                    <div class="not-found">
+                        Palavra não encontrada no dicionário. Tente outra palavra ou termo.
+                    </div>
+                ;
             }
         });
     </script>
